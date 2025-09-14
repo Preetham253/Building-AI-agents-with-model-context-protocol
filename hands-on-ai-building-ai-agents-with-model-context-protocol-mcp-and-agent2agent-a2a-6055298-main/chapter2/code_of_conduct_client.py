@@ -1,3 +1,10 @@
+'''
+Intent
+1. Connect to the MCP server
+2. Fetch the resource content(plain text from PDF) via MCP
+3. Feed that content to a LLM(Azure OpenAI) along with the user question, so the model answers grounded in the policy text
+'''
+
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
@@ -16,8 +23,9 @@ load_dotenv()
 #Configure the MCP Server Connection
 #-----------------------------------------------------------------------
 #Make sure the right path to the MCP server file is passed.
+# we use stdio transport
 server_params = StdioServerParameters(
-    command="python",
+    command="python", 
     args=[os.getcwd() + "/chapter2/code_of_conduct_server.py"],
 )
 
@@ -29,6 +37,7 @@ deployment = os.getenv("DEPLOYMENT_NAME")
 subscription_key = os.getenv("AZURE_OPENAI_API_KEY")
 api_version=os.getenv("API_VERSION")
 
+# create an AzureChatOpenAI instance
 model=AzureChatOpenAI(
     azure_endpoint=endpoint,
     api_key=subscription_key,
@@ -40,9 +49,12 @@ model=AzureChatOpenAI(
 #Asynchronous function to fetch content from MCP resource
 #Boilerplate code to run MCP and fetch resources
 #-----------------------------------------------------------------------
+'''
+This function boots the server, opens an MCP session, lists resources, and returns the text body of the first resource
+'''
 async def fetch_resource_content():
     print("Running the MCP server...")
-    async with stdio_client(server_params) as (read,write):
+    async with stdio_client(server_params) as (read,write): #
         #Initialize a session with the MCP server
         async with ClientSession(read,write) as session:
             print("initializing session")

@@ -1,3 +1,10 @@
+'''
+A client that 
+1. Connects to your Timeoff MCP server via HTTP
+2. loads the server tools and server supplied prompt
+3. wraps those tools within a LLM React agent
+4. answers a user query by thinking -> calling tools -> replying 
+'''
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.streamable_http import streamablehttp_client
 

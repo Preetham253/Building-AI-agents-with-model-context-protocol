@@ -1,3 +1,9 @@
+'''
+It's a data access layer(DAL) for the HR time off agent.
+It uses SQLite to store employees, their time off balances and history of requests.
+It provides CRUD operations like create, read, update that MCP server will later expose as tools.
+'''
+
 import sqlite3
 from datetime import datetime
 
@@ -7,7 +13,7 @@ from datetime import datetime
 #-----------------------------------------------------------------------
 class TimeOffDatastore:
     #Initialize the database connection, create tables and seed data
-    def __init__(self, db_path=":memory:"):
+    def __init__(self, db_path=":memory:"): #creates a temporary database in RAM
         print("Initializing TimeOffDatastore")
         self.conn = sqlite3.connect(db_path)
         print("Creating tables and seeding data")

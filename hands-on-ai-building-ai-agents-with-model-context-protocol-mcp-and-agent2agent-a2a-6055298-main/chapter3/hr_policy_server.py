@@ -10,11 +10,12 @@ from langchain_huggingface import HuggingFaceEmbeddings
 # Setup the MCP Server
 # -----------------------------------------------------------------------
 load_dotenv()
-hr_policies_mcp = FastMCP("HR-Policies-MCP-Server")
+hr_policies_mcp = FastMCP("HR-Policies-MCP-Server") #Instantiates a FastMCP server with a readable name (clients will see this during discovery).
 
 # -----------------------------------------------------------------------
 # Setup the Vector Store for use in retrieving policies
 # This will use the hr_policy_document.pdf file as its source
+# Build vector retrieval layer
 # -----------------------------------------------------------------------
 
 pdf_filename = "hr_policy_document.pdf"
@@ -27,7 +28,7 @@ policy_documents = loader.load_and_split()
 
 # Create embeddings
 policy_embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2")
+    model_name="sentence-transformers/all-MiniLM-L6-v2") 
 
 # Create In memory vector store
 policy_vector_store = InMemoryVectorStore.from_documents(

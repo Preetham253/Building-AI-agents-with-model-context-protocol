@@ -1,3 +1,7 @@
+'''
+This is a hr policy agent that communicates to MCP policy server and gets grounded answer from Azure OpenAI
+'''
+
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
@@ -6,7 +10,7 @@ from langchain_mcp_adapters.prompts import load_mcp_prompt
 from langgraph.prebuilt import create_react_agent
 from langchain_openai import AzureChatOpenAI
 
-import asyncio
+import asyncio #built in library for asyn programming
 import os
 from dotenv import load_dotenv
 
@@ -22,6 +26,8 @@ endpoint = os.getenv("ENDPOINT_URL")
 deployment = os.getenv("DEPLOYMENT_NAME")
 subscription_key = os.getenv("AZURE_OPENAI_API_KEY")
 api_version=os.getenv("API_VERSION")
+
+# This model is the brain that will read the 1. MCP Prompt 2. Decide to call the MCP tool 3. synthesize a final answer
 
 model=AzureChatOpenAI(
     azure_endpoint=endpoint,
@@ -50,7 +56,7 @@ async def run_hr_policy_agent(prompt: str) -> str:
 
     # Create a client session to connect to the MCP server
     async with stdio_client(server_params) as (read,write):
-        async with ClientSession(read,write) as session:
+        async with ClientSession(read,write) as session: #opens a ClientSession over stdio and performs the MCP handshake 
             print("initializing session")
             await session.initialize()
 
@@ -64,8 +70,7 @@ async def run_hr_policy_agent(prompt: str) -> str:
             print("\nPrompt loaded :", hr_policy_prompt)
 
             print("\nCreating agent")
-            agent=create_react_agent(model,hr_policy_tools)
-
+            agent=create_react_agent(model,hr_policy_tools) #build ReAct(reason + act) agent, this can think, decides to call a tool(query_policies), observe results and then answer
             print("\nAnswering prompt : ", prompt)
             agent_response = await agent.ainvoke(
                 {"messages": hr_policy_prompt})

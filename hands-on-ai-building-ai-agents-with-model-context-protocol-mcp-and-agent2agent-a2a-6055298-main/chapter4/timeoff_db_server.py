@@ -1,3 +1,10 @@
+'''
+An MCP server named Timeoff-MCP-Server that:
+1. Instantiates your SQLite-backed datastore(TimeOffDatastore)
+2. Exposes two tools over MCP  1. get_timeoff_balance 2. request_timeoff(employee_name, start_day, days)
+3. Exposes a prompt factory (get_llm_prompt(user,prompt)) for consistent LLM instructions
+4. Runs over HTTP so that an MCP client calls these remotely
+'''
 import os
 from dotenv import load_dotenv
 from fastmcp import FastMCP
@@ -34,6 +41,10 @@ def request_timeoff(employee_name: str, start_day:str, days: int) -> str:
                 employee_name, start_day, days)  
 
 #Get prompt for the LLM to use to answer the query
+'''
+- It's an MCP prompt provider.
+- Prompt provider generates an instruction message(system prompt) that an LLM recieves before it starts answering 
+'''
 @timeoff_mcp.prompt()
 def get_llm_prompt(user: str, prompt: str) -> str:
     """Generates a a prompt for the LLM to use to answer the query
